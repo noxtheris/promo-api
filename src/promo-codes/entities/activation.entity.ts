@@ -20,9 +20,13 @@ export class Activation {
   @Column({ name: 'promo_code_id', type: 'uuid', nullable: false })
   promoCodeId: string;
 
-  @ManyToOne(() => PromoCode, (promo) => promo.activations, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => PromoCode,
+    (promo) => promo.activations,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'promo_code_id' })
   promoCode: PromoCode;
 

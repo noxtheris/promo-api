@@ -42,6 +42,9 @@ export class PromoCode {
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @OneToMany(() => Activation, (activation) => activation.promoCode)
+  @OneToMany(
+    () => Activation,
+    (activation) => activation.promoCode,
+  )
   activations?: Activation[];
 }

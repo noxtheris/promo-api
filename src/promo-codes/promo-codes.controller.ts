@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -43,9 +34,7 @@ export class PromoCodesController {
   @Get()
   @ApiOperation({ summary: 'List promo codes' })
   @ApiOkResponse({ type: PaginatedResponseDto })
-  findAll(
-    @Query() query: PaginationQueryDto,
-  ): Promise<PaginatedResponseDto<PromoCodeResponseDto>> {
+  findAll(@Query() query: PaginationQueryDto): Promise<PaginatedResponseDto<PromoCodeResponseDto>> {
     return this.promoCodesService.findAll(query);
   }
 

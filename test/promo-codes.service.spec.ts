@@ -1,10 +1,7 @@
-import {
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import { DataSource, EntityManager, QueryFailedError, Repository } from 'typeorm';
 
 import { ActivatePromoCodeDto } from '@/promo-codes/dto/activate-promo-code.dto';
 import { CreatePromoCodeDto } from '@/promo-codes/dto/create-promo-code.dto';
@@ -34,13 +31,9 @@ const makeActivation = (overrides: Partial<Activation> = {}): Activation => ({
 });
 
 const makeQueryFailedError = (code: string): QueryFailedError => {
-  const error = new QueryFailedError('', [], new Error()) as QueryFailedError & {
-    driverError: Error & { code: string };
-  };
+  const driverError = Object.assign(new Error(), { code });
 
-  error.driverError = Object.assign(new Error(), { code });
-
-  return error;
+  return new QueryFailedError('', [], driverError);
 };
 
 const makePaginationQuery = (overrides: Partial<PaginationQueryDto> = {}): PaginationQueryDto => ({
@@ -48,6 +41,8 @@ const makePaginationQuery = (overrides: Partial<PaginationQueryDto> = {}): Pagin
   limit: 20,
   ...overrides,
 });
+
+type MockManager = Pick<EntityManager, 'findOne' | 'create' | 'save' | 'increment'>;
 
 describe('PromoCodesService', () => {
   let service: PromoCodesService;
@@ -192,8 +187,10 @@ describe('PromoCodesService', () => {
       email: 'user@example.com',
     };
 
-    const runActivate = (managerOverrides: any) => {
-      dataSource.transaction.mockImplementation((cb: any) => cb(managerOverrides));
+    const runActivate = (manager: jest.Mocked<MockManager>) => {
+      dataSource.transaction.mockImplementation(
+        (cb: (m: jest.Mocked<MockManager>) => Promise<unknown>) => cb(manager),
+      );
 
       return service.activate('SAVE20', dto);
     };
@@ -207,7 +204,7 @@ describe('PromoCodesService', () => {
         create: jest.fn().mockReturnValue(activation),
         save: jest.fn().mockResolvedValue(activation),
         increment: jest.fn(),
-      };
+      } as jest.Mocked<MockManager>;
 
       const result = await runActivate(manager);
 
@@ -227,7 +224,7 @@ describe('PromoCodesService', () => {
         create: jest.fn(),
         save: jest.fn(),
         increment: jest.fn(),
-      };
+      } as jest.Mocked<MockManager>;
 
       await expect(runActivate(manager)).rejects.toThrow(NotFoundException);
     });
@@ -240,7 +237,7 @@ describe('PromoCodesService', () => {
         create: jest.fn(),
         save: jest.fn(),
         increment: jest.fn(),
-      };
+      } as jest.Mocked<MockManager>;
 
       await expect(runActivate(manager)).rejects.toThrow(ConflictException);
     });
@@ -253,7 +250,7 @@ describe('PromoCodesService', () => {
         create: jest.fn(),
         save: jest.fn(),
         increment: jest.fn(),
-      };
+      } as jest.Mocked<MockManager>;
 
       await expect(runActivate(manager)).rejects.toThrow(ConflictException);
     });
@@ -266,7 +263,7 @@ describe('PromoCodesService', () => {
         create: jest.fn(),
         save: jest.fn().mockRejectedValue(makeQueryFailedError('23505')),
         increment: jest.fn(),
-      };
+      } as jest.Mocked<MockManager>;
 
       await expect(runActivate(manager)).rejects.toThrow(ConflictException);
     });

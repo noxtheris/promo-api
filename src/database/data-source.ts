@@ -12,5 +12,9 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD ?? 'promo_secret',
   database: process.env.DB_NAME ?? 'promo_db',
   entities: [PromoCode, Activation],
-  migrations: ['src/database/migrations/*.ts'],
+  migrations: [
+    process.env.NODE_ENV === 'production'
+      ? 'dist/database/migrations/*.js'
+      : 'src/database/migrations/*.ts'
+  ],
 });

@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, QueryFailedError, Repository } from 'typeorm';
 
@@ -47,9 +43,7 @@ export class PromoCodesService {
     }
   }
 
-  async findAll(
-    query: PaginationQueryDto,
-  ): Promise<PaginatedResponseDto<PromoCode>> {
+  async findAll(query: PaginationQueryDto): Promise<PaginatedResponseDto<PromoCode>> {
     const { page, limit } = query;
 
     const [data, total] = await this.promoCodeRepo.findAndCount({
@@ -73,10 +67,7 @@ export class PromoCodesService {
     return promoCode;
   }
 
-  async activate(
-    code: string,
-    dto: ActivatePromoCodeDto,
-  ): Promise<ActivationResult> {
+  async activate(code: string, dto: ActivatePromoCodeDto): Promise<ActivationResult> {
     return this.dataSource.transaction(async (manager) => {
       const promoCode = await manager.findOne(PromoCode, {
         where: { code },
@@ -109,20 +100,13 @@ export class PromoCodesService {
           error instanceof QueryFailedError &&
           (error.driverError as { code?: string }).code === PG_UNIQUE_VIOLATION
         ) {
-          throw new ConflictException(
-            `Promo code already activated for email "${dto.email}"`,
-          );
+          throw new ConflictException(`Promo code already activated for email "${dto.email}"`);
         }
 
         throw error;
       }
 
-      await manager.increment(
-        PromoCode,
-        { id: promoCode.id },
-        'activationCount',
-        1,
-      );
+      await manager.increment(PromoCode, { id: promoCode.id }, 'activationCount', 1);
 
       return {
         ...activation,

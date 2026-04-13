@@ -1,14 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import {
-  IsDateString,
-  IsInt,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-  MinLength,
-} from 'class-validator';
+import { IsDateString, IsInt, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
 
 export class CreatePromoCodeDto {
   @ApiProperty({ example: 'SUMMER20', minLength: 3, maxLength: 50 })

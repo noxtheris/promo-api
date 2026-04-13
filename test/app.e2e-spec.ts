@@ -60,14 +60,12 @@ describe('PromoCodesController (e2e)', () => {
 
   describe('POST /promo-codes', () => {
     it('creates promo code', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/promo-codes')
-        .send({
-          code: 'summer10',
-          discount: 10,
-          activationLimit: 100,
-          expiresAt: '2030-12-31T23:59:59.000Z',
-        });
+      const res = await request(app.getHttpServer()).post('/promo-codes').send({
+        code: 'summer10',
+        discount: 10,
+        activationLimit: 100,
+        expiresAt: '2030-12-31T23:59:59.000Z',
+      });
 
       expect(res.status).toBe(201);
       expect(res.body.code).toBe('SUMMER10');
@@ -75,14 +73,12 @@ describe('PromoCodesController (e2e)', () => {
     });
 
     it('normalizes code', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/promo-codes')
-        .send({
-          code: '  winter30  ',
-          discount: 30,
-          activationLimit: 5,
-          expiresAt: '2030-01-01T00:00:00.000Z',
-        });
+      const res = await request(app.getHttpServer()).post('/promo-codes').send({
+        code: '  winter30  ',
+        discount: 30,
+        activationLimit: 5,
+        expiresAt: '2030-01-01T00:00:00.000Z',
+      });
 
       expect(res.status).toBe(201);
       expect(res.body.code).toBe('WINTER30');
@@ -103,27 +99,23 @@ describe('PromoCodesController (e2e)', () => {
     });
 
     it('returns 400 for invalid discount', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/promo-codes')
-        .send({
-          code: 'BAD',
-          discount: 101,
-          activationLimit: 1,
-          expiresAt: '2030-01-01T00:00:00.000Z',
-        });
+      const res = await request(app.getHttpServer()).post('/promo-codes').send({
+        code: 'BAD',
+        discount: 101,
+        activationLimit: 1,
+        expiresAt: '2030-01-01T00:00:00.000Z',
+      });
 
       expect(res.status).toBe(400);
     });
 
     it('returns 400 for whitespace code', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/promo-codes')
-        .send({
-          code: '   ',
-          discount: 10,
-          activationLimit: 1,
-          expiresAt: '2030-01-01T00:00:00.000Z',
-        });
+      const res = await request(app.getHttpServer()).post('/promo-codes').send({
+        code: '   ',
+        discount: 10,
+        activationLimit: 1,
+        expiresAt: '2030-01-01T00:00:00.000Z',
+      });
 
       expect(res.status).toBe(400);
     });
@@ -140,9 +132,12 @@ describe('PromoCodesController (e2e)', () => {
     it('returns paginated list with total', async () => {
       await Promise.all(
         ['ALPHA', 'BETA', 'GAMMA'].map((code) =>
-          request(app.getHttpServer())
-            .post('/promo-codes')
-            .send({ code, discount: 10, activationLimit: 10, expiresAt: '2030-01-01T00:00:00.000Z' }),
+          request(app.getHttpServer()).post('/promo-codes').send({
+            code,
+            discount: 10,
+            activationLimit: 10,
+            expiresAt: '2030-01-01T00:00:00.000Z',
+          }),
         ),
       );
 
@@ -158,9 +153,12 @@ describe('PromoCodesController (e2e)', () => {
     it('returns second page correctly', async () => {
       await Promise.all(
         ['ALPHA', 'BETA', 'GAMMA'].map((code) =>
-          request(app.getHttpServer())
-            .post('/promo-codes')
-            .send({ code, discount: 10, activationLimit: 10, expiresAt: '2030-01-01T00:00:00.000Z' }),
+          request(app.getHttpServer()).post('/promo-codes').send({
+            code,
+            discount: 10,
+            activationLimit: 10,
+            expiresAt: '2030-01-01T00:00:00.000Z',
+          }),
         ),
       );
 
@@ -303,9 +301,7 @@ describe('PromoCodesController (e2e)', () => {
 
       const results = await Promise.all(
         emails.map((email) =>
-          request(app.getHttpServer())
-            .post('/promo-codes/RACE/activate')
-            .send({ email }),
+          request(app.getHttpServer()).post('/promo-codes/RACE/activate').send({ email }),
         ),
       );
 

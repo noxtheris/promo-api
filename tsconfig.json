@@ -11,10 +11,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "src",
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "types": ["jest", "node"],
     "noImplicitAny": true,
@@ -22,6 +23,6 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
