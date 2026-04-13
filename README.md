@@ -2,7 +2,7 @@
 
 REST API for promo code management. Built with NestJS, TypeORM, PostgreSQL.
 
-> **Time spent:** ~3.5 hours
+> **Time spent:** ~4.5 hours
 
 ## Stack
 
